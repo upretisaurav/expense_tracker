@@ -1,9 +1,11 @@
+import 'package:expense_tracker/src/providers/expense_provider.dart';
 import 'package:expense_tracker/src/styles/color_styles.dart';
 import 'package:expense_tracker/src/styles/text_styles.dart';
 import 'package:expense_tracker/src/views/calculator_screen.dart';
 import 'package:expense_tracker/src/views/report_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -28,48 +30,55 @@ class HomePage extends StatelessWidget {
               "BUDGET TRACKER",
               style: TextStyles.humongous.copyWith(fontWeight: FontWeight.w900),
             ),
-            Container(
-                margin: const EdgeInsets.only(top: 16.0),
-                height: 120.0,
-                decoration: BoxDecoration(
-                  color: ColorStyles.lightGreen.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(6.0),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: <Widget>[
-                    Container(
-                      height: 90.0,
-                      width: 140.0,
-                      decoration: const BoxDecoration(
-                          image: DecorationImage(
-                        image: AssetImage("assets/images/budget_wallet.png"),
-                      )),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 24.0,
+            Consumer<ExpenseProvider>(
+              builder: (context, expenseProvider, child) {
+                double balance = expenseProvider.balance;
+
+                return Container(
+                  margin: const EdgeInsets.only(top: 16.0),
+                  height: 120.0,
+                  decoration: BoxDecoration(
+                    color: ColorStyles.lightGreen.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(6.0),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      Container(
+                        height: 90.0,
+                        width: 140.0,
+                        decoration: const BoxDecoration(
+                            image: DecorationImage(
+                          image: AssetImage("assets/images/budget_wallet.png"),
+                        )),
                       ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            "Your Balance",
-                            style: TextStyles.smallMedium
-                                .copyWith(color: ColorStyles.gray),
-                          ),
-                          const SizedBox(height: 12.0),
-                          Text(
-                            "\$0.00",
-                            style: TextStyles.humongous
-                                .copyWith(color: ColorStyles.lightGreen),
-                          )
-                        ],
-                      ),
-                    )
-                  ],
-                )),
+                      Container(
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 24.0,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              "Your Balance",
+                              style: TextStyles.smallMedium
+                                  .copyWith(color: ColorStyles.gray),
+                            ),
+                            const SizedBox(height: 12.0),
+                            Text(
+                              "\$ $balance",
+                              style: TextStyles.humongous
+                                  .copyWith(color: ColorStyles.lightGreen),
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                );
+              },
+            ),
             const SizedBox(height: 24.0),
             Expanded(
               child: Column(
@@ -88,8 +97,9 @@ class HomePage extends StatelessWidget {
                               onTap: () {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
-                                    builder: (context) =>
-                                        const CalculatorPage(),
+                                    builder: (context) => const CalculatorPage(
+                                      isInflow: true,
+                                    ),
                                   ),
                                 );
                               },
@@ -127,9 +137,13 @@ class HomePage extends StatelessWidget {
                             flex: 1,
                             child: GestureDetector(
                               onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) =>
-                                        const CalculatorPage()));
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => const CalculatorPage(
+                                      isInflow: false,
+                                    ),
+                                  ),
+                                );
                               },
                               child: Container(
                                 decoration: BoxDecoration(

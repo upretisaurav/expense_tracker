@@ -1,11 +1,14 @@
+import 'package:expense_tracker/src/data/model/expense.dart';
+import 'package:expense_tracker/src/providers/expense_provider.dart';
 import 'package:expense_tracker/src/styles/color_styles.dart';
 import 'package:expense_tracker/src/styles/text_styles.dart';
 import 'package:expense_tracker/widgets/buttons.dart';
-import 'package:expense_tracker/widgets/form_components.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CalculatorPage extends StatefulWidget {
-  const CalculatorPage({super.key});
+  final bool isInflow;
+  const CalculatorPage({super.key, required this.isInflow});
 
   @override
   State<CalculatorPage> createState() => _CalculatorPageState();
@@ -17,16 +20,60 @@ class _CalculatorPageState extends State<CalculatorPage> {
   final textControllerInput = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  List<String> inflowOptions = ['Salary', 'Bonus', 'Investment', 'Gift'];
+  List<String> outflowOptions = [
+    'Groceries',
+    'Rent',
+    'Utilities',
+    'Entertainment'
+  ];
+
   @override
   void initState() {
     super.initState();
-    textControllerInput.addListener(() {});
+    textControllerInput.addListener(() {
+      setState(() {
+        amount = textControllerInput.text;
+      });
+    });
   }
 
   @override
   void dispose() {
     textControllerInput.dispose();
     super.dispose();
+  }
+
+  void _saveExpense() {
+    if (_formKey.currentState!.validate() &&
+        amount.isNotEmpty &&
+        amountSource.isNotEmpty) {
+      _formKey.currentState!.save();
+
+      final expense = Expense(
+        title: amountSource,
+        amount: double.tryParse(amount) ?? 0,
+        date: DateTime.now().toString(),
+        isInflow: widget.isInflow,
+        category: amountSource,
+      );
+
+      Provider.of<ExpenseProvider>(context, listen: false)
+          .addExpense(expense)
+          .then((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+                '${widget.isInflow ? "Income" : "Expense"} added successfully'),
+          ),
+        );
+        Navigator.pop(context);
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a valid amount and source')),
+      );
+    }
   }
 
   @override
@@ -40,6 +87,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              const SizedBox(
+                height: 40,
+              ),
               GestureDetector(
                 onTap: () {
                   Navigator.of(context).pop();
@@ -64,7 +114,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
                           padding: const EdgeInsets.symmetric(horizontal: 24.0),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(6.0),
-                            color: ColorStyles.lightGreen.withOpacity(0.2),
+                            color: widget.isInflow
+                                ? ColorStyles.lightGreen.withOpacity(0.2)
+                                : ColorStyles.red.withOpacity(0.2),
                           ),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -95,21 +147,31 @@ class _CalculatorPageState extends State<CalculatorPage> {
                 child: Container(
                   margin: const EdgeInsets.symmetric(
                       vertical: 16.0, horizontal: 12.0),
-                  child: FormTextField(
-                    hintText: "Select Source",
-                    inputType: TextInputType.text,
-                    onSave: (String value) {
-                      amountSource = value;
+                  child: DropdownButtonFormField<String>(
+                    value: null, // Initial value
+                    hint: const Text("Select Source"),
+                    items: (widget.isInflow ? inflowOptions : outflowOptions)
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        amountSource = newValue!;
+                      });
                     },
-                    onFocus: () {
-                      //todo: yet to decide
-                    },
-                    validator: (String value) {
-                      return ((value.isEmpty)) ? "Enter source" : null;
-                    },
-                    trailing: const Icon(
-                      Icons.arrow_drop_down,
-                      color: ColorStyles.gray,
+                    validator: (value) =>
+                        value == null ? 'Please select a source' : null,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 12.0,
+                        vertical: 8.0,
+                      ),
                     ),
                   ),
                 ),
@@ -144,17 +206,18 @@ class _CalculatorPageState extends State<CalculatorPage> {
                     ],
                   ),
                   const SizedBox(height: 12.0),
-                  PrimaryButton(
-                    icon: const Icon(Icons.add, color: Colors.white),
-                    buttonText: "ADD",
-                    onTap: () {
-                      //check if the source is entered
-                      // if (_formKey.currentState.validate()) {
-                      //   //trigger the onSave callback of all the formfield in this key
-                      //   _formKey.currentState.save();
-                      // }
-                    },
-                  )
+                  widget.isInflow
+                      ? PrimaryButton(
+                          icon: const Icon(Icons.add, color: Colors.white),
+                          buttonText: "ADD",
+                          onTap: _saveExpense,
+                        )
+                      : PrimaryButton(
+                          icon: const Icon(Icons.add, color: Colors.white),
+                          buttonText: "Deduct",
+                          onTap: _saveExpense,
+                          isInflow: false,
+                        )
                 ],
               )
             ],
@@ -178,8 +241,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
           padding: const EdgeInsets.all(18.0),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(6.0)),
-          splashFactory: InkRipple.splashFactory,
-          // primary: ColorStyles.primaryAccent,
         ),
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12.0),
@@ -208,8 +269,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(6.0),
           ),
-          splashFactory: InkRipple.splashFactory,
-          // primary: ColorStyles.red.withOpacity(0.6),
         ),
         child: Container(
             padding: const EdgeInsets.symmetric(vertical: 12.0),
@@ -234,8 +293,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(6.0),
           ),
-          splashFactory: InkRipple.splashFactory,
-          // primary: ColorStyles.red.withOpacity(0.6),
         ),
         child: Container(
             padding: const EdgeInsets.symmetric(vertical: 12.0),

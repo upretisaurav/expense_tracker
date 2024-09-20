@@ -6,12 +6,14 @@ class PrimaryButton extends StatelessWidget {
   final String buttonText;
   final VoidCallback onTap;
   final Icon icon;
+  final bool? isInflow;
 
   const PrimaryButton({
     super.key,
     required this.buttonText,
     required this.onTap,
     required this.icon,
+    this.isInflow,
   });
 
   @override
@@ -24,7 +26,7 @@ class PrimaryButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 28.0, vertical: 16.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(6.0),
-          color: ColorStyles.primaryAccent,
+          color: isInflow == false ? Colors.red : ColorStyles.primaryAccent,
         ),
         child: Center(
           child: Row(
