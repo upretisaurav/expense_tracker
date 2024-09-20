@@ -210,6 +210,35 @@ class _$ExpenseDao extends ExpenseDao {
   }
 
   @override
+  Future<List<Expense>> getExpensesBetweenDates(
+    String startDate,
+    String endDate,
+  ) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM Expense WHERE date BETWEEN ?1 AND ?2',
+        mapper: (Map<String, Object?> row) => Expense(
+            id: row['id'] as int?,
+            title: row['title'] as String,
+            amount: row['amount'] as double,
+            date: row['date'] as String,
+            isInflow: (row['isInflow'] as int) != 0,
+            category: row['category'] as String),
+        arguments: [startDate, endDate]);
+  }
+
+  @override
+  Future<double?> getTotalBetweenDates(
+    bool isInflow,
+    String startDate,
+    String endDate,
+  ) async {
+    return _queryAdapter.query(
+        'SELECT SUM(amount) FROM Expense WHERE isInflow = ?1 AND date BETWEEN ?2 AND ?3',
+        mapper: (Map<String, Object?> row) => row.values.first as double,
+        arguments: [isInflow ? 1 : 0, startDate, endDate]);
+  }
+
+  @override
   Future<void> insertExpense(Expense expense) async {
     await _expenseInsertionAdapter.insert(expense, OnConflictStrategy.abort);
   }

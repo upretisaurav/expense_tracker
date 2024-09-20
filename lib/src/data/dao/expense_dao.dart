@@ -15,6 +15,15 @@ abstract class ExpenseDao {
   @Query('SELECT DISTINCT category FROM Expense WHERE isInflow = :isInflow')
   Future<List<String>> getCategoriesByType(bool isInflow);
 
+  @Query('SELECT * FROM Expense WHERE date BETWEEN :startDate AND :endDate')
+  Future<List<Expense>> getExpensesBetweenDates(
+      String startDate, String endDate);
+
+  @Query(
+      'SELECT SUM(amount) FROM Expense WHERE isInflow = :isInflow AND date BETWEEN :startDate AND :endDate')
+  Future<double?> getTotalBetweenDates(
+      bool isInflow, String startDate, String endDate);
+
   @insert
   Future<void> insertExpense(Expense expense);
 

@@ -40,6 +40,27 @@ class ExpenseProvider with ChangeNotifier {
     await fetchCategories();
   }
 
+  Future<List<Expense>> getExpensesBetweenDates(
+      DateTime startDate, DateTime endDate) async {
+    return await _repository.getExpensesBetweenDates(startDate, endDate);
+  }
+
+  Future<double> getTotalBetweenDates(
+      bool isInflow, DateTime startDate, DateTime endDate) async {
+    return await _repository.getTotalBetweenDates(isInflow, startDate, endDate);
+  }
+
+  Future<Map<String, double>> getCategoryTotalsBetweenDates(
+      DateTime startDate, DateTime endDate) async {
+    final expenses = await getExpensesBetweenDates(startDate, endDate);
+    final categoryTotals = <String, double>{};
+    for (var expense in expenses) {
+      categoryTotals[expense.category] =
+          (categoryTotals[expense.category] ?? 0) + expense.amount;
+    }
+    return categoryTotals;
+  }
+
   List<Expense> getExpensesByCategory(String category) {
     return _expenses.where((expense) => expense.category == category).toList();
   }

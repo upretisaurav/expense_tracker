@@ -56,7 +56,14 @@ class IntroWidget extends StatelessWidget {
 }
 
 class ReportSummaryWidget extends StatelessWidget {
-  const ReportSummaryWidget({super.key});
+  final double totalInflow;
+  final double totalOutflow;
+  final double balance;
+  const ReportSummaryWidget(
+      {super.key,
+      required this.totalInflow,
+      required this.totalOutflow,
+      required this.balance});
 
   @override
   Widget build(BuildContext context) {
@@ -72,9 +79,10 @@ class ReportSummaryWidget extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                reportContent("INFLOW", "+3500"),
-                reportContent("OUTFLOW", "-2000"),
-                reportContent("BALANCE", "+1500"),
+                reportContent("INFLOW", "\$${totalInflow.toStringAsFixed(2)}"),
+                reportContent(
+                    "OUTFLOW", " \$${totalOutflow.toStringAsFixed(2)}"),
+                reportContent("BALANCE", "\$${balance.toStringAsFixed(2)}"),
               ],
             ),
           ),
@@ -113,7 +121,7 @@ enum BudgetType {
 class BudgetWidget extends StatelessWidget {
   final BudgetType budgetType;
   final String source;
-  final int amount;
+  final double amount;
 
   const BudgetWidget({
     super.key,
