@@ -204,34 +204,69 @@ class GoalsPage extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Add New Goal'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          title: const Text(
+            'Add New Goal',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 24.0,
+            ),
+          ),
           content: SingleChildScrollView(
             child: Form(
               key: formKey,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   TextFormField(
-                    decoration: const InputDecoration(labelText: 'Goal Name'),
+                    decoration: InputDecoration(
+                      labelText: 'Goal Name',
+                      labelStyle: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey[700],
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                    ),
                     validator: (value) =>
                         value!.isEmpty ? 'Please enter a name' : null,
                     onSaved: (value) => name = value!,
                   ),
+                  const SizedBox(height: 12.0),
                   TextFormField(
-                    decoration: const InputDecoration(
-                        labelText: 'Description (optional)'),
+                    decoration: InputDecoration(
+                      labelText: 'Description (optional)',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                    ),
                     onSaved: (value) => description = value ?? '',
                   ),
+                  const SizedBox(height: 12.0),
                   TextFormField(
-                    decoration:
-                        const InputDecoration(labelText: 'Target Amount'),
+                    decoration: InputDecoration(
+                      labelText: 'Target Amount',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                    ),
                     keyboardType: TextInputType.number,
                     validator: (value) =>
                         value!.isEmpty ? 'Please enter an amount' : null,
                     onSaved: (value) => targetAmount = double.parse(value!),
                   ),
+                  const SizedBox(height: 12.0),
                   DropdownButtonFormField<String>(
-                    decoration: const InputDecoration(labelText: 'Category'),
+                    decoration: InputDecoration(
+                      labelText: 'Category',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                    ),
                     value: category,
                     items: [
                       'House',
@@ -254,7 +289,10 @@ class GoalsPage extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("Start Date: ${startDate.toLocal()}".split(' ')[0]),
+                      Text(
+                        "Start Date: ${startDate.toLocal()}".split(' ')[0],
+                        style: const TextStyle(fontWeight: FontWeight.w500),
+                      ),
                       ElevatedButton(
                         onPressed: () async {
                           final picked = await showDatePicker(
@@ -267,6 +305,12 @@ class GoalsPage extends StatelessWidget {
                             startDate = picked;
                           }
                         },
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          backgroundColor: Colors.blueAccent,
+                        ),
                         child: const Text("Select Start Date"),
                       ),
                     ],
@@ -275,7 +319,10 @@ class GoalsPage extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("End Date: ${endDate.toLocal()}".split(' ')[0]),
+                      Text(
+                        "End Date: ${endDate.toLocal()}".split(' ')[0],
+                        style: const TextStyle(fontWeight: FontWeight.w500),
+                      ),
                       ElevatedButton(
                         onPressed: () async {
                           final picked = await showDatePicker(
@@ -288,6 +335,12 @@ class GoalsPage extends StatelessWidget {
                             endDate = picked;
                           }
                         },
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          backgroundColor: Colors.blueAccent,
+                        ),
                         child: const Text("Select End Date"),
                       ),
                     ],
@@ -298,11 +351,22 @@ class GoalsPage extends StatelessWidget {
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Cancel'),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(color: Colors.redAccent, fontSize: 16),
+              ),
               onPressed: () => Navigator.of(context).pop(),
             ),
-            TextButton(
-              child: const Text('Add'),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: ColorStyles.primaryColor,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: const Text('Add', style: TextStyle(fontSize: 16)),
               onPressed: () {
                 if (formKey.currentState!.validate()) {
                   formKey.currentState!.save();
