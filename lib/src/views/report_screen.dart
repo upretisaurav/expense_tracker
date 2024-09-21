@@ -148,7 +148,7 @@ class _ReportPageState extends State<ReportPage> {
                 ),
               ),
 
-            const SizedBox(height: 10.0),
+            const SizedBox(height: 20.0),
 
             // List of filtered inflows and outflows
             Expanded(
@@ -156,6 +156,7 @@ class _ReportPageState extends State<ReportPage> {
                   ? const Center(
                       child: Text("No data available for the selected range"))
                   : ListView.builder(
+                      padding: EdgeInsets.zero,
                       itemCount: _filteredExpenses.length,
                       itemBuilder: (BuildContext __, int index) {
                         final expense = _filteredExpenses[index];

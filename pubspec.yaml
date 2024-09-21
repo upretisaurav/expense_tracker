@@ -8,6 +8,7 @@ environment:
 
 dependencies:
   carbon_icons: ^0.0.1+2
+  emoji_picker_flutter: ^3.0.0
   floor: ^1.5.0
   flutter:
     sdk: flutter
@@ -15,6 +16,7 @@ dependencies:
   flutter_svg: ^2.0.10+1
   get_it: ^7.7.0
   intl: ^0.19.0
+  lottie: ^3.1.2
   provider: ^6.1.2
   shared_preferences: ^2.3.2
   smooth_page_indicator: ^1.2.0+3
@@ -32,6 +34,7 @@ flutter:
   assets:
     - assets/svg/
     - assets/images/
+    - assets/lottie/
   fonts:
     - family: Inter
       fonts:

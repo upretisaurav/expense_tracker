@@ -25,7 +25,7 @@ class CustomNavBarState extends State<CustomNavBar> {
   final List<Widget> _screens = <Widget>[
     const HomePage(),
     const ReportPage(),
-    const GoalsPage(),
+    GoalsPage(),
   ];
 
   @override
