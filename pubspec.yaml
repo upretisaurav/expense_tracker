@@ -7,9 +7,11 @@ environment:
   sdk: ^3.5.3
 
 dependencies:
+  carbon_icons: ^0.0.1+2
   floor: ^1.5.0
   flutter:
     sdk: flutter
+  flutter_feather_icons: ^2.0.0+1
   flutter_svg: ^2.0.10+1
   get_it: ^7.7.0
   intl: ^0.19.0

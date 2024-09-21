@@ -17,8 +17,12 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => ExpenseProvider(),
-      child: const MaterialApp(
-        home: WelcomePage(),
+      child: MaterialApp(
+        theme: ThemeData(
+          useMaterial3: false,
+        ),
+        home: const WelcomePage(),
+        debugShowCheckedModeBanner: false,
       ),
     );
   }

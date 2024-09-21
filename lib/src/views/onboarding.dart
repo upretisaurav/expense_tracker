@@ -1,11 +1,14 @@
 import 'package:expense_tracker/src/styles/color_styles.dart';
 import 'package:expense_tracker/src/styles/text_styles.dart';
+import 'package:expense_tracker/src/views/custom_nav_bar.dart';
 import 'package:expense_tracker/src/views/home_screen.dart';
 import 'package:expense_tracker/widgets/buttons.dart';
 import 'package:expense_tracker/widgets/generic.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
+final GlobalKey<CustomNavBarState> navBarKey = GlobalKey<CustomNavBarState>();
 
 class WelcomePage extends StatelessWidget {
   const WelcomePage({super.key});
@@ -174,8 +177,13 @@ class _AppIntroPageState extends State<AppIntroPage> {
                       setState(() {
                         sharedPreferences.setBool("isFirstTime", false);
                       });
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const HomePage()));
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) => CustomNavBar(
+                            key: navBarKey,
+                          ),
+                        ),
+                      );
                     },
                     child: Row(
                       children: <Widget>[
@@ -204,8 +212,13 @@ class _AppIntroPageState extends State<AppIntroPage> {
                         _controller.nextPage(
                             duration: kTabScrollDuration, curve: Curves.ease);
                       } else {
-                        Navigator.of(context).pushReplacement(MaterialPageRoute(
-                            builder: (context) => const HomePage()));
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) => CustomNavBar(
+                              key: navBarKey,
+                            ),
+                          ),
+                        );
                       }
                     },
                     child: Row(

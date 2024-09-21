@@ -15,6 +15,15 @@ class ExpenseProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  ExpenseProvider() {
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    await fetchExpenses();
+    await fetchCategories();
+  }
+
   Future<void> fetchCategories() async {
     final inflowCategories = await _repository.getCategoriesByType(true);
     final outflowCategories = await _repository.getCategoriesByType(false);
