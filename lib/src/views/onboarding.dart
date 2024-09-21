@@ -1,7 +1,6 @@
 import 'package:expense_tracker/src/styles/color_styles.dart';
 import 'package:expense_tracker/src/styles/text_styles.dart';
 import 'package:expense_tracker/src/views/custom_nav_bar.dart';
-import 'package:expense_tracker/src/views/home_screen.dart';
 import 'package:expense_tracker/widgets/buttons.dart';
 import 'package:expense_tracker/widgets/generic.dart';
 import 'package:flutter/material.dart';

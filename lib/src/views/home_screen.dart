@@ -4,7 +4,6 @@ import 'package:expense_tracker/src/styles/color_styles.dart';
 import 'package:expense_tracker/src/styles/text_styles.dart';
 import 'package:expense_tracker/src/views/calculator_screen.dart';
 import 'package:expense_tracker/src/views/onboarding.dart';
-import 'package:expense_tracker/src/views/report_screen.dart';
 import 'package:expense_tracker/widgets/generic.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
