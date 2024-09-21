@@ -4,6 +4,7 @@ import 'package:expense_tracker/src/views/custom_nav_bar.dart';
 import 'package:expense_tracker/widgets/buttons.dart';
 import 'package:expense_tracker/widgets/generic.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -84,14 +85,13 @@ class AppIntroPage extends StatefulWidget {
 class _AppIntroPageState extends State<AppIntroPage> {
   final _controller = PageController();
 
-  late SharedPreferences sharedPreferences;
+  final SharedPreferences _prefs = GetIt.I<SharedPreferences>();
   bool? isFirstTime = true;
   bool hasEndReached = false;
 
   getCredential() async {
-    sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
-      isFirstTime = sharedPreferences.getBool("isFirstTime");
+      isFirstTime = _prefs.getBool("isFirstTime");
       // if (!isFirstTime ?? false) {
       //   //todo go to home page;
       // }
@@ -174,7 +174,7 @@ class _AppIntroPageState extends State<AppIntroPage> {
                   GestureDetector(
                     onTap: () {
                       setState(() {
-                        sharedPreferences.setBool("isFirstTime", false);
+                        _prefs.setBool("isFirstTime", false);
                       });
                       Navigator.of(context).pushReplacement(
                         MaterialPageRoute(

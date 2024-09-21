@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:expense_tracker/src/data/model/goal.dart';
 import 'package:expense_tracker/src/providers/goal_provider.dart';
 import 'package:expense_tracker/src/styles/color_styles.dart';
@@ -36,7 +35,16 @@ class GoalsPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             const SizedBox(height: 24.0),
-            const Text("Your Goals", style: TextStyles.humongous),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text("Your Goals", style: TextStyles.humongous),
+                IconButton(
+                  onPressed: () => _showNotificationDialog(context),
+                  icon: const Icon(Icons.notifications),
+                ),
+              ],
+            ),
             const SizedBox(
               height: 12.0,
             ),
@@ -386,5 +394,78 @@ class GoalsPage extends StatelessWidget {
         );
       },
     );
+  }
+
+  Future<void> _showNotificationDialog(BuildContext context) async {
+    int? reminders = await showDialog<int>(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const Text(
+                  'Savings Reminders',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+                const Text(
+                  'How many times do you want to be reminded to save money today?',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    color: Colors.black54,
+                  ),
+                ),
+                const SizedBox(height: 20.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    ElevatedButton(
+                      onPressed: () => Navigator.of(context).pop(1),
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                      ),
+                      child: const Text('1'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () => Navigator.of(context).pop(2),
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                      ),
+                      child: const Text('2'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () => Navigator.of(context).pop(3),
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                      ),
+                      child: const Text('3'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    if (reminders != null) {}
   }
 }
