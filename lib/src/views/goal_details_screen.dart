@@ -11,10 +11,10 @@ import 'package:lottie/lottie.dart';
 class GoalDetailsScreen extends StatefulWidget {
   final Goal goal;
 
-  GoalDetailsScreen({super.key, required this.goal});
+  const GoalDetailsScreen({super.key, required this.goal});
 
   @override
-  _GoalDetailsScreenState createState() => _GoalDetailsScreenState();
+  State<GoalDetailsScreen> createState() => _GoalDetailsScreenState();
 }
 
 class _GoalDetailsScreenState extends State<GoalDetailsScreen> {

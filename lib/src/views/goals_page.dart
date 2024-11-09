@@ -74,10 +74,21 @@ class GoalsPage extends StatelessWidget {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: ColorStyles.primaryColor,
-        child: const Icon(Icons.add),
-        onPressed: () => _showAddGoalDialog(context),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            backgroundColor: ColorStyles.primaryColor,
+            child: const Icon(Icons.add),
+            onPressed: () => _showAddGoalDialog(context),
+          ),
+          const SizedBox(height: 16),
+          FloatingActionButton(
+            backgroundColor: ColorStyles.primaryColor,
+            child: const Icon(Icons.autorenew),
+            onPressed: () => _showAutomatedSavingDialog(context),
+          ),
+        ],
       ),
     );
   }
@@ -477,5 +488,155 @@ class GoalsPage extends StatelessWidget {
     );
 
     if (reminders != null) {}
+  }
+
+  void _showAutomatedSavingDialog(BuildContext context) {
+    final formKey = GlobalKey<FormState>();
+    double amount = 0;
+    Goal? selectedGoal;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+              title: const Text(
+                'Automated Saving',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24.0,
+                ),
+              ),
+              content: SingleChildScrollView(
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      DropdownButtonFormField<Goal>(
+                        decoration: InputDecoration(
+                          labelText: 'Select Goal',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                        ),
+                        items: _goalProvider.goals.map((Goal goal) {
+                          return DropdownMenuItem<Goal>(
+                            value: goal,
+                            child: Row(
+                              children: [
+                                Text(goal.name),
+                                if (_goalProvider.isGoalAutomated(goal))
+                                  const Padding(
+                                    padding: EdgeInsets.only(left: 8.0),
+                                    child: Icon(Icons.access_time,
+                                        color: Colors.blue, size: 16),
+                                  )
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (Goal? newValue) {
+                          setState(() {
+                            selectedGoal = newValue;
+                          });
+                        },
+                        validator: (value) =>
+                            value == null ? 'Please select a goal' : null,
+                      ),
+                      const SizedBox(height: 12.0),
+                      if (selectedGoal != null &&
+                          !_goalProvider.isGoalAutomated(selectedGoal!))
+                        TextFormField(
+                          decoration: InputDecoration(
+                            labelText: 'Amount',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                          ),
+                          keyboardType: TextInputType.number,
+                          validator: (value) =>
+                              value!.isEmpty ? 'Please enter an amount' : null,
+                          onSaved: (value) => amount = double.parse(value!),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(color: Colors.redAccent, fontSize: 16),
+                  ),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+                if (selectedGoal != null)
+                  _goalProvider.isGoalAutomated(selectedGoal!)
+                      ? ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.redAccent,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 10),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: const Text('Stop Automation',
+                              style: TextStyle(fontSize: 16)),
+                          onPressed: () {
+                            _goalProvider.cancelAutomatedSaving(selectedGoal!);
+                            Navigator.of(context).pop();
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Automated saving cancelled'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          },
+                        )
+                      : ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: ColorStyles.primaryColor,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 10),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: const Text('Start Automation',
+                              style: TextStyle(fontSize: 16)),
+                          onPressed: () {
+                            if (formKey.currentState!.validate()) {
+                              formKey.currentState!.save();
+                              _scheduleAutomatedSaving(selectedGoal!, amount);
+                              Navigator.of(context).pop();
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Automated saving started'),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                            }
+                          },
+                        ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _scheduleAutomatedSaving(Goal goal, double amount) {
+    const interval = Duration(days: 1);
+    _goalProvider.scheduleAutomatedSaving(goal, amount, interval);
   }
 }
