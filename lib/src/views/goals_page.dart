@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:expense_tracker/src/data/model/goal.dart';
 import 'package:expense_tracker/src/providers/goal_provider.dart';
+import 'package:expense_tracker/src/services/notification_service.dart';
 import 'package:expense_tracker/src/styles/color_styles.dart';
 import 'package:expense_tracker/src/styles/text_styles.dart';
 import 'package:expense_tracker/src/views/goal_details_screen.dart';
@@ -431,7 +432,10 @@ class GoalsPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     ElevatedButton(
-                      onPressed: () => Navigator.of(context).pop(1),
+                      onPressed: () {
+                        NotificationService.scheduleDailyReminders(1);
+                        Navigator.of(context).pop(1);
+                      },
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12.0),
@@ -440,7 +444,10 @@ class GoalsPage extends StatelessWidget {
                       child: const Text('1'),
                     ),
                     ElevatedButton(
-                      onPressed: () => Navigator.of(context).pop(2),
+                      onPressed: () {
+                        NotificationService.scheduleDailyReminders(2);
+                        Navigator.of(context).pop(2);
+                      },
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12.0),
@@ -449,7 +456,10 @@ class GoalsPage extends StatelessWidget {
                       child: const Text('2'),
                     ),
                     ElevatedButton(
-                      onPressed: () => Navigator.of(context).pop(3),
+                      onPressed: () {
+                        NotificationService.scheduleDailyReminders(3);
+                        Navigator.of(context).pop(3);
+                      },
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12.0),
