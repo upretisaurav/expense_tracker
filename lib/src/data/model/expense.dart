@@ -18,4 +18,22 @@ class Expense {
       required this.date,
       required this.isInflow,
       required this.category});
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'title': title,
+        'amount': amount,
+        'date': date,
+        'isInflow': isInflow,
+        'category': category,
+      };
+
+  factory Expense.fromJson(Map<String, dynamic> json) => Expense(
+        id: json['id'],
+        title: json['title'],
+        amount: json['amount'],
+        date: json['date'],
+        isInflow: json['isInflow'],
+        category: json['category'],
+      );
 }

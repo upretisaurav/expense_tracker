@@ -1,12 +1,23 @@
 import 'package:expense_tracker/locator.dart';
 import 'package:expense_tracker/src/data/model/expense.dart';
+import 'package:expense_tracker/src/services/api_service.dart';
 import 'package:intl/intl.dart';
 import '../database/app_database.dart';
 
 class ExpenseRepository {
   final expenseDao = getIt<AppDatabase>().expenseDao;
+  final apiService = getIt<ApiService>();
 
   Future<List<Expense>> getAllExpenses() => expenseDao.getAllExpenses();
+
+  Future<Map<String, dynamic>> syncExpensesWithBackend(
+      List<Expense> expenses) async {
+    try {
+      return await apiService.sendExpenses(expenses);
+    } catch (e) {
+      rethrow;
+    }
+  }
 
   Future<List<Expense>> getExpensesByType(bool isInflow) =>
       expenseDao.getExpensesByType(isInflow);
@@ -37,7 +48,9 @@ class ExpenseRepository {
         0.0;
   }
 
-  Future<void> addExpense(Expense expense) => expenseDao.insertExpense(expense);
+  Future<void> addExpense(Expense expense) async {
+    await expenseDao.insertExpense(expense);
+  }
 
   Future<void> updateExpense(Expense expense) =>
       expenseDao.updateExpense(expense);

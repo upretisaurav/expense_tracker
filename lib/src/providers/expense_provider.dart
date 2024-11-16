@@ -1,9 +1,11 @@
 import 'package:expense_tracker/src/data/model/expense.dart';
 import 'package:expense_tracker/src/data/repository/expense_repository.dart';
+import 'package:expense_tracker/src/providers/trend_provider.dart';
 import 'package:flutter/foundation.dart';
 
 class ExpenseProvider with ChangeNotifier {
   final ExpenseRepository _repository = ExpenseRepository();
+  final TrendProvider _trendProvider;
   List<Expense> _expenses = [];
   List<String> _categories = [];
 
@@ -13,15 +15,27 @@ class ExpenseProvider with ChangeNotifier {
   Future<void> fetchExpenses() async {
     _expenses = await _repository.getAllExpenses();
     notifyListeners();
+    await syncTrendAnalysis();
   }
 
-  ExpenseProvider() {
+  ExpenseProvider(this._trendProvider) {
     _initialize();
   }
 
   Future<void> _initialize() async {
     await fetchExpenses();
     await fetchCategories();
+  }
+
+  Future<void> syncTrendAnalysis() async {
+    try {
+      final trendResponse =
+          await _repository.syncExpensesWithBackend(_expenses);
+      await _trendProvider.updateTrendData(trendResponse);
+    } catch (e) {
+      // Handle error appropriately
+      debugPrint('Error syncing trend analysis: $e');
+    }
   }
 
   Future<void> fetchCategories() async {
@@ -35,18 +49,21 @@ class ExpenseProvider with ChangeNotifier {
     await _repository.addExpense(expense);
     await fetchExpenses();
     await fetchCategories();
+    await syncTrendAnalysis();
   }
 
   Future<void> updateExpense(Expense expense) async {
     await _repository.updateExpense(expense);
     await fetchExpenses();
     await fetchCategories();
+    await syncTrendAnalysis();
   }
 
   Future<void> deleteExpense(Expense expense) async {
     await _repository.deleteExpense(expense);
     await fetchExpenses();
     await fetchCategories();
+    await syncTrendAnalysis();
   }
 
   Future<List<Expense>> getExpensesBetweenDates(

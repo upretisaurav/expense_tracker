@@ -3,6 +3,7 @@ import 'package:expense_tracker/src/styles/color_styles.dart';
 import 'package:expense_tracker/src/views/goals_page.dart';
 import 'package:expense_tracker/src/views/home_screen.dart';
 import 'package:expense_tracker/src/views/report_screen.dart';
+import 'package:expense_tracker/src/views/trend_analysis_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 
@@ -25,6 +26,7 @@ class CustomNavBarState extends State<CustomNavBar> {
   final List<Widget> _screens = <Widget>[
     const HomePage(),
     const ReportPage(),
+    const TrendAnalysisScreen(),
     GoalsPage(),
   ];
 
@@ -38,6 +40,7 @@ class CustomNavBarState extends State<CustomNavBar> {
         showUnselectedLabels: false,
         selectedItemColor: ColorStyles.primaryColor,
         currentIndex: _currentIndex,
+        type: BottomNavigationBarType.fixed, // Add this to support 4 items
         onTap: (index) {
           setState(() {
             _currentIndex = index;
@@ -57,6 +60,13 @@ class CustomNavBarState extends State<CustomNavBar> {
               size: 28.0,
             ),
             label: 'Report',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              FeatherIcons.trendingUp,
+              size: 28.0,
+            ),
+            label: 'Trends',
           ),
           BottomNavigationBarItem(
             icon: Icon(
