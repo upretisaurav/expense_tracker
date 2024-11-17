@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:expense_tracker/src/data/model/expense.dart';
 import 'package:expense_tracker/src/providers/expense_provider.dart';
+import 'package:expense_tracker/src/providers/user_provider.dart';
 import 'package:expense_tracker/src/styles/color_styles.dart';
 import 'package:expense_tracker/src/styles/text_styles.dart';
 import 'package:expense_tracker/src/views/calculator_screen.dart';
@@ -9,8 +12,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<UserProvider>().fetchUserProfile();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,23 +38,68 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            // Padding wrapper for the first part of the screen
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(
-                    "WELCOME TO",
-                    style: TextStyles.smallMedium
-                        .copyWith(color: ColorStyles.secondaryTextColor),
-                  ),
-                  const SizedBox(height: 8.0),
-                  Text(
-                    "BUDGET TRACKER",
-                    style: TextStyles.humongous.copyWith(
-                      fontWeight: FontWeight.w900,
-                    ),
+                  Consumer<UserProvider>(
+                    builder: (context, userProvider, child) {
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "WELCOME",
+                                  style: TextStyles.smallMedium.copyWith(
+                                    color: ColorStyles.secondaryTextColor,
+                                  ),
+                                ),
+                                const SizedBox(height: 8.0),
+                                Text(
+                                  userProvider.user?.name ?? "User",
+                                  style: TextStyles.humongous.copyWith(
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: ColorStyles.primaryColor,
+                                width: 2,
+                              ),
+                            ),
+                            child: ClipOval(
+                              child: userProvider.user?.photo != null
+                                  ? Image.file(
+                                      File(userProvider.user!.photo),
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return const Icon(
+                                          Icons.person,
+                                          color: ColorStyles.primaryColor,
+                                        );
+                                      },
+                                    )
+                                  : const Icon(
+                                      Icons.person,
+                                      color: ColorStyles.primaryColor,
+                                    ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                   Consumer<ExpenseProvider>(
                     builder: (context, expenseProvider, child) {
